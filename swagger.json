@@ -5,6 +5,16 @@
     "version": "1.0.0",
     "description": "API for managing books and library members."
   },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://library-api-bnqp.onrender.com",
+      "description": "Production Server"
+    }
+  ],
   "paths": {
     "/books": {
       "get": {
@@ -29,7 +39,7 @@
         },
         "responses": {
           "201": {
-            "description": "Book created successfully"
+            "description": "Book created"
           }
         }
       }
@@ -50,9 +60,6 @@
         "responses": {
           "200": {
             "description": "Book found"
-          },
-          "404": {
-            "description": "Book not found"
           }
         }
       },
@@ -68,19 +75,9 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Book"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Book updated successfully"
+            "description": "Book updated"
           }
         }
       },
@@ -98,7 +95,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Book deleted successfully"
+            "description": "Book deleted"
           }
         }
       }
@@ -126,7 +123,7 @@
         },
         "responses": {
           "201": {
-            "description": "Member created successfully"
+            "description": "Member created"
           }
         }
       }
@@ -162,19 +159,9 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Member"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Member updated successfully"
+            "description": "Member updated"
           }
         }
       },
@@ -192,7 +179,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Member deleted successfully"
+            "description": "Member deleted"
           }
         }
       }
@@ -202,51 +189,74 @@
     "schemas": {
       "Book": {
         "type": "object",
+        "required": [
+          "title",
+          "author",
+          "genre",
+          "year",
+          "isbn",
+          "publisher",
+          "pages"
+        ],
         "properties": {
           "title": {
-            "type": "string"
+            "type": "string",
+            "example": "The Great Gatsby"
           },
           "author": {
-            "type": "string"
+            "type": "string",
+            "example": "F. Scott Fitzgerald"
           },
           "genre": {
-            "type": "string"
+            "type": "string",
+            "example": "Classic"
           },
           "year": {
-            "type": "integer"
+            "type": "number",
+            "example": 1925
           },
           "isbn": {
-            "type": "string"
+            "type": "string",
+            "example": "9780743273565"
           },
           "publisher": {
-            "type": "string"
+            "type": "string",
+            "example": "Scribner"
           },
           "pages": {
-            "type": "integer"
+            "type": "number",
+            "example": 180
           },
           "available": {
-            "type": "boolean"
+            "type": "boolean",
+            "example": true
           }
         }
       },
       "Member": {
         "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "phone"
+        ],
         "properties": {
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "example": "John"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "example": "Smith"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "example": "john.smith@email.com"
           },
           "phone": {
-            "type": "string"
-          },
-          "membershipDate": {
             "type": "string",
-            "format": "date"
+            "example": "555-1234"
           }
         }
       }
