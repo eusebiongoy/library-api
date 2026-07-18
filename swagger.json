@@ -60,6 +60,9 @@
         "responses": {
           "200": {
             "description": "Book found"
+          },
+          "404": {
+            "description": "Book not found"
           }
         }
       },
@@ -75,9 +78,25 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Book updated"
+            "description": "Book updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Book not found"
           }
         }
       },
@@ -96,6 +115,9 @@
         "responses": {
           "200": {
             "description": "Book deleted"
+          },
+          "404": {
+            "description": "Book not found"
           }
         }
       }
@@ -144,6 +166,9 @@
         "responses": {
           "200": {
             "description": "Member found"
+          },
+          "404": {
+            "description": "Member not found"
           }
         }
       },
@@ -159,9 +184,25 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Member"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Member updated"
+            "description": "Member updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Member not found"
           }
         }
       },
@@ -180,6 +221,9 @@
         "responses": {
           "200": {
             "description": "Member deleted"
+          },
+          "404": {
+            "description": "Member not found"
           }
         }
       }
@@ -257,6 +301,11 @@
           "phone": {
             "type": "string",
             "example": "555-1234"
+          },
+          "membershipDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-01-15"
           }
         }
       }
