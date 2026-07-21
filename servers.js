@@ -12,21 +12,36 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
 
+app.use(
+    cors({
+        origin: true,
+        credentials: true
+    })
+);
+
+// Session
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 1000 * 60 * 60 * 24
+        }
     })
 );
 
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // Routes
 const booksRoutes = require("./routes/books");
@@ -36,6 +51,7 @@ const authRoutes = require("./routes/auth");
 app.use("/books", booksRoutes);
 app.use("/members", membersRoutes);
 app.use("/", authRoutes);
+
 
 // Home Route
 app.get("/", (req, res) => {

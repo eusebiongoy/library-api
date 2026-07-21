@@ -3,6 +3,17 @@ const passport = require("passport");
 
 const router = express.Router();
 
+console.log("AUTH ROUTE FILE LOADED");
+
+
+// Test auth route
+router.get("/auth/test", (req, res) => {
+    res.json({
+        message: "Auth routes are working"
+    });
+});
+
+
 // Start GitHub OAuth login
 router.get(
     "/auth/github",
@@ -11,16 +22,19 @@ router.get(
     })
 );
 
+
 // GitHub callback
 router.get(
     "/auth/github/callback",
     passport.authenticate("github", {
-        failureRedirect: "/login"
+        failureRedirect: "/auth/test"
     }),
     (req, res) => {
-        res.redirect("/");
+        console.log("GitHub login successful");
+        res.redirect("/profile");
     }
 );
+
 
 // Logout
 router.get("/logout", (req, res, next) => {
@@ -33,8 +47,12 @@ router.get("/logout", (req, res, next) => {
     });
 });
 
+
 // Check current login status
 router.get("/profile", (req, res) => {
+
+    console.log("Profile check:", req.user);
+
     if (!req.isAuthenticated()) {
         return res.status(401).json({
             message: "You are not logged in"
@@ -45,5 +63,6 @@ router.get("/profile", (req, res) => {
         user: req.user
     });
 });
+
 
 module.exports = router;
