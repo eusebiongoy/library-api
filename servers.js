@@ -1,10 +1,12 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const session = require("express-session");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
-
-require("dotenv").config();
+const passport = require("./config/passport");
 
 const app = express();
 
@@ -12,15 +14,28 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 const booksRoutes = require("./routes/books");
 const membersRoutes = require("./routes/members");
+const authRoutes = require("./routes/auth");
 
 app.use("/books", booksRoutes);
 app.use("/members", membersRoutes);
+app.use("/", authRoutes);
 
 // Home Route
 app.get("/", (req, res) => {
