@@ -29,6 +29,11 @@
       "description": "Library member management endpoints"
     }
   ],
+  "security": [
+  {
+    "cookieAuth": []
+  }
+],
   "paths": {
 
     "/auth/github": {

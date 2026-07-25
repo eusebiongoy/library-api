@@ -76,7 +76,10 @@ app.use(
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, {
         swaggerOptions: {
-            withCredentials: true
+            requestInterceptor: (req) => {
+                req.credentials = "include";
+                return req;
+            }
         }
     })
 );
