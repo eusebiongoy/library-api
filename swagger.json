@@ -3,7 +3,7 @@
   "info": {
     "title": "Library API",
     "version": "1.0.0",
-    "description": "API for managing books and library members."
+    "description": "Library API with CRUD operations for books and members. Authentication is handled using GitHub OAuth with Passport sessions."
   },
   "servers": [
     {
@@ -15,9 +15,88 @@
       "description": "Production Server"
     }
   ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "GitHub OAuth authentication and user session management"
+    },
+    {
+      "name": "Books",
+      "description": "Book management endpoints"
+    },
+    {
+      "name": "Members",
+      "description": "Library member management endpoints"
+    }
+  ],
   "paths": {
+
+    "/auth/github": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login with GitHub OAuth",
+        "description": "Redirects the user to GitHub for authentication."
+      }
+    },
+
+    "/auth/github/callback": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "GitHub OAuth callback",
+        "description": "Handles GitHub authentication response and creates a session."
+      }
+    },
+
+    "/profile": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get logged-in user profile",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated user profile"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+
+    "/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout user",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged out"
+          }
+        }
+      }
+    },
+
     "/books": {
       "get": {
+        "tags": [
+          "Books"
+        ],
         "summary": "Get all books",
         "responses": {
           "200": {
@@ -25,8 +104,17 @@
           }
         }
       },
+
       "post": {
+        "tags": [
+          "Books"
+        ],
         "summary": "Create a new book",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -39,13 +127,24 @@
         },
         "responses": {
           "201": {
-            "description": "Book created"
+            "description": "Book created successfully"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "400": {
+            "description": "Validation error"
           }
         }
       }
     },
+
     "/books/{id}": {
+
       "get": {
+        "tags": [
+          "Books"
+        ],
         "summary": "Get a book by ID",
         "parameters": [
           {
@@ -66,8 +165,17 @@
           }
         }
       },
+
       "put": {
+        "tags": [
+          "Books"
+        ],
         "summary": "Update a book",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -92,16 +200,25 @@
           "200": {
             "description": "Book updated successfully"
           },
-          "400": {
-            "description": "Invalid request"
+          "401": {
+            "description": "Authentication required"
           },
-          "404": {
-            "description": "Book not found"
+          "403": {
+            "description": "Cannot update another user's book"
           }
         }
       },
+
       "delete": {
+        "tags": [
+          "Books"
+        ],
         "summary": "Delete a book",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -114,16 +231,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Book deleted"
+            "description": "Book deleted successfully"
           },
-          "404": {
-            "description": "Book not found"
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Cannot delete another user's book"
           }
         }
       }
     },
+
     "/members": {
+
       "get": {
+        "tags": [
+          "Members"
+        ],
         "summary": "Get all members",
         "responses": {
           "200": {
@@ -131,8 +256,17 @@
           }
         }
       },
+
       "post": {
-        "summary": "Create a new member",
+        "tags": [
+          "Members"
+        ],
+        "summary": "Create a member",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -145,14 +279,22 @@
         },
         "responses": {
           "201": {
-            "description": "Member created"
+            "description": "Member created successfully"
+          },
+          "401": {
+            "description": "Authentication required"
           }
         }
       }
     },
+
     "/members/{id}": {
+
       "get": {
-        "summary": "Get a member by ID",
+        "tags": [
+          "Members"
+        ],
+        "summary": "Get member by ID",
         "parameters": [
           {
             "name": "id",
@@ -172,8 +314,17 @@
           }
         }
       },
+
       "put": {
-        "summary": "Update a member",
+        "tags": [
+          "Members"
+        ],
+        "summary": "Update member",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -196,18 +347,24 @@
         },
         "responses": {
           "200": {
-            "description": "Member updated successfully"
+            "description": "Member updated"
           },
-          "400": {
-            "description": "Invalid request"
-          },
-          "404": {
-            "description": "Member not found"
+          "401": {
+            "description": "Authentication required"
           }
         }
       },
+
       "delete": {
-        "summary": "Delete a member",
+        "tags": [
+          "Members"
+        ],
+        "summary": "Delete member",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -222,15 +379,29 @@
           "200": {
             "description": "Member deleted"
           },
-          "404": {
-            "description": "Member not found"
+          "401": {
+            "description": "Authentication required"
           }
         }
       }
     }
   },
+
   "components": {
+
+    "securitySchemes": {
+
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "library.sid",
+        "description": "Passport session cookie created after GitHub OAuth login."
+      }
+
+    },
+
     "schemas": {
+
       "Book": {
         "type": "object",
         "required": [
@@ -277,6 +448,7 @@
           }
         }
       },
+
       "Member": {
         "type": "object",
         "required": [
@@ -296,7 +468,7 @@
           },
           "email": {
             "type": "string",
-            "example": "john.smith@email.com"
+            "example": "john@email.com"
           },
           "phone": {
             "type": "string",
@@ -305,10 +477,12 @@
           "membershipDate": {
             "type": "string",
             "format": "date",
-            "example": "2025-01-15"
+            "example": "2026-01-15"
           }
         }
       }
+
     }
+
   }
 }

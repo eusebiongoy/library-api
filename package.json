@@ -1,18 +1,25 @@
 {
   "name": "library-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Library API with MongoDB CRUD operations and GitHub OAuth authentication",
   "main": "servers.js",
   "scripts": {
     "start": "node servers.js",
-    "dev": "nodemon servers.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon servers.js"
   },
-  "keywords": [],
+  "keywords": [
+    "node",
+    "express",
+    "mongodb",
+    "oauth",
+    "passport",
+    "swagger"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

@@ -31,6 +31,12 @@ const memberSchema = new mongoose.Schema(
     membershipDate: {
       type: Date,
       required: [true, "Membership date is required"]
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     }
   },
   {

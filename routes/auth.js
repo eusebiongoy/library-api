@@ -6,7 +6,7 @@ const router = express.Router();
 console.log("AUTH ROUTE FILE LOADED");
 
 
-// Test auth route
+// Test route
 router.get("/auth/test", (req, res) => {
     res.json({
         message: "Auth routes are working"
@@ -14,7 +14,8 @@ router.get("/auth/test", (req, res) => {
 });
 
 
-// Start GitHub OAuth login
+
+// GitHub login
 router.get(
     "/auth/github",
     passport.authenticate("github", {
@@ -23,46 +24,129 @@ router.get(
 );
 
 
+
 // GitHub callback
 router.get(
     "/auth/github/callback",
+
     passport.authenticate("github", {
         failureRedirect: "/auth/test"
     }),
+
     (req, res) => {
-        console.log("GitHub login successful");
-        res.redirect("/profile");
+
+        req.session.save((err)=>{
+
+            if(err){
+                return res.status(500).json({
+                    message:"Session save failed"
+                });
+            }
+
+            res.redirect("/auth/success");
+
+        });
+
     }
 );
 
 
+// Success page
+router.get("/auth/success", (req,res)=>{
+
+    res.json({
+
+        message:"GitHub login successful",
+
+        authenticated:req.isAuthenticated(),
+
+        user:req.user
+
+    });
+
+});
+
+// Profile
+router.get("/profile",(req,res)=>{
+
+
+    console.log("PROFILE USER:", req.user);
+
+
+    if(!req.isAuthenticated()){
+
+        return res.status(401).json({
+
+            message:"You are not logged in"
+
+        });
+
+    }
+
+
+    res.json({
+
+        message:"Your GitHub profile",
+
+        user:req.user
+
+    });
+
+
+});
+
+
+
+
 // Logout
-router.get("/logout", (req, res, next) => {
-    req.logout(function (err) {
-        if (err) {
+router.get("/logout",(req,res,next)=>{
+
+
+    req.logout((err)=>{
+
+        if(err){
             return next(err);
         }
 
-        res.redirect("/");
+
+        req.session.destroy(()=>{
+
+
+            res.json({
+
+                message:"Logged out successfully"
+
+            });
+
+
+        });
+
+
     });
+
+
 });
 
 
-// Check current login status
-router.get("/profile", (req, res) => {
 
-    console.log("Profile check:", req.user);
 
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({
-            message: "You are not logged in"
-        });
-    }
+// Debug session
+router.get("/debug/session",(req,res)=>{
+
 
     res.json({
-        user: req.user
+
+        session:req.session,
+
+        user:req.user || null,
+
+        authenticated:req.isAuthenticated()
+
     });
+
+
 });
+
 
 
 module.exports = router;

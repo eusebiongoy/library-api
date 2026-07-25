@@ -1,16 +1,22 @@
 const Book = require("../models/Book");
 
+
 // GET all books
 const getAllBooks = async (req, res) => {
     try {
-        const books = await Book.find();
+
+        const books = await Book.find()
+            .populate("createdBy", "username name email avatar");
 
         res.status(200).json(books);
+
     } catch (error) {
+
         res.status(500).json({
             message: "Error retrieving books",
             error: error.message
         });
+
     }
 };
 
@@ -18,7 +24,10 @@ const getAllBooks = async (req, res) => {
 // GET one book by ID
 const getBookById = async (req, res) => {
     try {
-        const book = await Book.findById(req.params.id);
+
+        const book = await Book.findById(req.params.id)
+            .populate("createdBy", "username name email avatar");
+
 
         if (!book) {
             return res.status(404).json({
@@ -26,22 +35,27 @@ const getBookById = async (req, res) => {
             });
         }
 
+
         res.status(200).json(book);
 
+
     } catch (error) {
+
         res.status(400).json({
             message: "Invalid book ID",
             error: error.message
         });
+
     }
 };
 
 
-// CREATE a new book just comment
+// CREATE a new book
 const createBook = async (req, res) => {
     try {
 
         const newBook = new Book({
+
             title: req.body.title,
             author: req.body.author,
             genre: req.body.genre,
@@ -49,18 +63,26 @@ const createBook = async (req, res) => {
             isbn: req.body.isbn,
             publisher: req.body.publisher,
             pages: req.body.pages,
-            available: req.body.available
+            available: req.body.available,
+
+            createdBy: req.user._id
+
         });
+
 
         const savedBook = await newBook.save();
 
+
         res.status(201).json(savedBook);
 
+
     } catch (error) {
+
         res.status(400).json({
             message: "Error creating book",
             error: error.message
         });
+
     }
 };
 
@@ -68,6 +90,30 @@ const createBook = async (req, res) => {
 // UPDATE a book
 const updateBook = async (req, res) => {
     try {
+
+        const book = await Book.findById(req.params.id);
+
+
+        if (!book) {
+
+            return res.status(404).json({
+                message: "Book not found"
+            });
+
+        }
+
+
+        if (book.createdBy.toString() !== req.user._id.toString()) {
+
+            return res.status(403).json({
+                message: "You can only update your own books"
+            });
+
+        }
+
+
+        delete req.body.createdBy;
+
 
         const updatedBook = await Book.findByIdAndUpdate(
             req.params.id,
@@ -78,19 +124,17 @@ const updateBook = async (req, res) => {
             }
         );
 
-        if (!updatedBook) {
-            return res.status(404).json({
-                message: "Book not found"
-            });
-        }
 
         res.status(200).json(updatedBook);
 
+
     } catch (error) {
+
         res.status(400).json({
             message: "Error updating book",
             error: error.message
         });
+
     }
 };
 
@@ -99,23 +143,42 @@ const updateBook = async (req, res) => {
 const deleteBook = async (req, res) => {
     try {
 
-        const deletedBook = await Book.findByIdAndDelete(req.params.id);
+        const book = await Book.findById(req.params.id);
 
-        if (!deletedBook) {
+
+        if (!book) {
+
             return res.status(404).json({
                 message: "Book not found"
             });
+
         }
+
+
+        if (book.createdBy.toString() !== req.user._id.toString()) {
+
+            return res.status(403).json({
+                message: "You can only delete your own books"
+            });
+
+        }
+
+
+        await Book.findByIdAndDelete(req.params.id);
+
 
         res.status(200).json({
             message: "Book deleted successfully"
         });
 
+
     } catch (error) {
+
         res.status(400).json({
             message: "Error deleting book",
             error: error.message
         });
+
     }
 };
 

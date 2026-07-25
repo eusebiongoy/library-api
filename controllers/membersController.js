@@ -3,7 +3,8 @@ const Member = require("../models/Member");
 // GET all members
 const getAllMembers = async (req, res) => {
     try {
-        const members = await Member.find();
+        const members = await Member.find()
+            .populate("createdBy", "username name email avatar");
 
         res.status(200).json(members);
 
@@ -19,7 +20,8 @@ const getAllMembers = async (req, res) => {
 // GET one member by ID
 const getMemberById = async (req, res) => {
     try {
-        const member = await Member.findById(req.params.id);
+        const member = await Member.findById(req.params.id)
+            .populate("createdBy", "username name email avatar");
 
         if (!member) {
             return res.status(404).json({
@@ -47,7 +49,9 @@ const createMember = async (req, res) => {
             lastName: req.body.lastName,
             email: req.body.email,
             phone: req.body.phone,
-            membershipDate: req.body.membershipDate
+            membershipDate: req.body.membershipDate,
+
+            createdBy: req.user._id
         });
 
         const savedMember = await newMember.save();
@@ -67,6 +71,28 @@ const createMember = async (req, res) => {
 const updateMember = async (req, res) => {
     try {
 
+        const member = await Member.findById(req.params.id);
+
+
+        if (!member) {
+            return res.status(404).json({
+                message: "Member not found"
+            });
+        }
+
+
+        if (member.createdBy.toString() !== req.user._id.toString()) {
+
+            return res.status(403).json({
+                message: "You can only update your own members"
+            });
+
+        }
+
+
+        delete req.body.createdBy;
+
+
         const updatedMember = await Member.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -76,11 +102,6 @@ const updateMember = async (req, res) => {
             }
         );
 
-        if (!updatedMember) {
-            return res.status(404).json({
-                message: "Member not found"
-            });
-        }
 
         res.status(200).json(updatedMember);
 
@@ -97,13 +118,27 @@ const updateMember = async (req, res) => {
 const deleteMember = async (req, res) => {
     try {
 
-        const deletedMember = await Member.findByIdAndDelete(req.params.id);
+        const member = await Member.findById(req.params.id);
 
-        if (!deletedMember) {
+
+        if (!member) {
             return res.status(404).json({
                 message: "Member not found"
             });
         }
+
+
+        if (member.createdBy.toString() !== req.user._id.toString()) {
+
+            return res.status(403).json({
+                message: "You can only delete your own members"
+            });
+
+        }
+
+
+        await Member.findByIdAndDelete(req.params.id);
+
 
         res.status(200).json({
             message: "Member deleted successfully"
