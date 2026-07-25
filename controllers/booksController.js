@@ -103,6 +103,7 @@ const updateBook = async (req, res) => {
         }
 
 
+        // Only allow the owner to update the book
         if (book.createdBy.toString() !== req.user._id.toString()) {
 
             return res.status(403).json({
@@ -112,16 +113,40 @@ const updateBook = async (req, res) => {
         }
 
 
-        delete req.body.createdBy;
+        // Check duplicate ISBN only if ISBN is being updated
+        if (req.body.isbn) {
+
+            const existingBook = await Book.findOne({
+                isbn: req.body.isbn,
+                _id: { $ne: req.params.id }
+            });
+
+
+            if (existingBook) {
+
+                return res.status(400).json({
+                    message: "ISBN already exists for another book"
+                });
+
+            }
+
+        }
 
 
         const updatedBook = await Book.findByIdAndUpdate(
+
             req.params.id,
+
             req.body,
+
             {
                 new: true,
                 runValidators: true
             }
+
+        ).populate(
+            "createdBy",
+            "username name email avatar"
         );
 
 
@@ -183,9 +208,11 @@ const deleteBook = async (req, res) => {
 };
 
 module.exports = {
+
     getAllBooks,
     getBookById,
     createBook,
     updateBook,
     deleteBook
+
 };
