@@ -23,11 +23,13 @@ app.use(express.json());
 // CORS
 app.use(
     cors({
-        origin: true,
+        origin: [
+            "http://localhost:3000",
+            "https://library-api-bnqp.onrender.com"
+        ],
         credentials: true
     })
 );
-
 
 // Session configuration
 app.use(
@@ -72,9 +74,12 @@ app.use(passport.session());
 app.use(
     "/api-docs",
     swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec)
+    swaggerUi.setup(swaggerSpec, {
+        swaggerOptions: {
+            withCredentials: true
+        }
+    })
 );
-
 
 // Routes
 const booksRoutes = require("./routes/books");
