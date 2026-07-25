@@ -340,16 +340,51 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Member"
-              }
-            }
+   "requestBody": {
+  "required": true,
+  "content": {
+    "application/json": {
+      "schema": {
+        "type": "object",
+        "description": "Update only the fields you want to change",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "New Book Title"
+          },
+          "author": {
+            "type": "string",
+            "example": "New Author"
+          },
+          "genre": {
+            "type": "string",
+            "example": "Science Fiction"
+          },
+          "year": {
+            "type": "number",
+            "example": 2026
+          },
+          "isbn": {
+            "type": "string",
+            "example": "9781234567890"
+          },
+          "publisher": {
+            "type": "string",
+            "example": "New Publisher"
+          },
+          "pages": {
+            "type": "number",
+            "example": 250
+          },
+          "available": {
+            "type": "boolean",
+            "example": true
           }
-        },
+        }
+      }
+    }
+  }
+},
         "responses": {
           "200": {
             "description": "Member updated"
