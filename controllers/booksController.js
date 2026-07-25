@@ -129,6 +129,7 @@ const updateBook = async (req, res) => {
 
 
 // DELETE a book
+// DELETE a book
 const deleteBook = async (req, res) => {
     try {
 
@@ -139,15 +140,6 @@ const deleteBook = async (req, res) => {
 
             return res.status(404).json({
                 message: "Book not found"
-            });
-
-        }
-
-
-        if (book.createdBy.toString() !== req.user._id.toString()) {
-
-            return res.status(403).json({
-                message: "You can only delete your own books"
             });
 
         }
@@ -170,7 +162,6 @@ const deleteBook = async (req, res) => {
 
     }
 };
-
 
 module.exports = {
     getAllBooks,
